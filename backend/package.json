@@ -1,0 +1,16 @@
+{
+  "name": "meu-player-backend",
+  "version": "1.0.0",
+  "description": "API e banco de dados do Meu Player (Node.js + SQLite nativo, sem dependências)",
+  "type": "module",
+  "private": true,
+  "engines": {
+    "node": ">=22.13"
+  },
+  "scripts": {
+    "start": "node --disable-warning=ExperimentalWarning src/server.js",
+    "dev": "node --watch --disable-warning=ExperimentalWarning src/server.js",
+    "import": "node --disable-warning=ExperimentalWarning scripts/import-folder.js",
+    "test": "node --disable-warning=ExperimentalWarning --test test/*.test.js"
+  }
+}
