@@ -18,6 +18,7 @@ Player de música pessoal que **funciona sem internet**. Você importa as músic
 - **Capas**: lidas do MP3, geradas automaticamente ou escolhidas da galeria
 - Editar título, artista e álbum de cada música
 - Importar músicas (MP3, M4A, FLAC, WAV, OGG) de arquivos ou de uma pasta, lendo as tags ID3 sem bibliotecas
+- **Senha** opcional: tela de bloqueio ao abrir, guardada como hash PBKDF2-SHA256 (Web Crypto), nunca em texto puro
 - Continua de onde parou, cor de destaque personalizável, backup das playlists em JSON
 - Controles na tela de bloqueio e no fone (Media Session API)
 - Funciona 100% offline (Service Worker + IndexedDB) e é instalável no celular

@@ -49,6 +49,19 @@
   <input id="pick-cover" type="file" accept="image/*" hidden>
 
   <div id="sheet-root"></div>
+
+  <!-- Tela de bloqueio (quando há senha) -->
+  <div id="lock" class="lock" hidden>
+    <form id="lock-form" class="lock-box" autocomplete="off">
+      <img src="icons/icon-192.png" alt="" class="lock-logo">
+      <h1>Meu Player</h1>
+      <p id="lock-msg" class="lock-msg">Digite sua senha para entrar</p>
+      <label class="sr-only" for="lock-input">Senha</label>
+      <input id="lock-input" class="lock-input" type="password" inputmode="text" autocomplete="current-password" placeholder="Senha" required>
+      <button class="btn primary lock-btn" id="lock-btn">Entrar</button>
+      <button type="button" class="link-btn lock-forgot" id="lock-forgot">Esqueci a senha</button>
+    </form>
+  </div>
   <div id="toast" class="toast" role="status" hidden></div>
 
   <script type="module" src="js/app.js"></script>

@@ -383,6 +383,27 @@ button.setting, a.setting { width: 100%; background: none; border: 0; border-top
 .empty { text-align: center; color: var(--muted); padding: 40px 16px; line-height: 1.5; font-size: 14px; }
 .empty strong { display: block; color: var(--text); font-size: 16px; margin-bottom: 4px; }
 
+/* ============ Tela de bloqueio ============ */
+.lock {
+  position: fixed; inset: 0; z-index: 50; display: flex; align-items: center; justify-content: center; padding: 24px;
+  background: radial-gradient(120% 80% at 50% 0%, color-mix(in srgb, var(--accent) 22%, #0c0d0f) 0%, #0c0d0f 60%);
+}
+.lock-box { width: 100%; max-width: 340px; display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center; }
+.lock-logo { width: 84px; height: 84px; border-radius: 22px; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.45); margin-bottom: 6px; }
+.lock-msg { margin: 0 0 8px; color: var(--muted); font-size: 14px; min-height: 20px; }
+.lock-msg.error { color: var(--danger); }
+.lock-input {
+  width: 100%; height: 54px; padding: 0 16px; border-radius: 14px; border: 1px solid var(--line-2); background: var(--surface);
+  outline: none; font-size: 18px; text-align: center; letter-spacing: 2px;
+}
+.lock-input:focus { border-color: var(--accent); }
+.lock-btn { width: 100%; height: 52px; font-size: 15px; }
+.lock-forgot { color: var(--muted); font-weight: 500; }
+.shake { animation: shake 0.35s ease; }
+@keyframes shake { 20%, 60% { transform: translateX(-8px); } 40%, 80% { transform: translateX(8px); } }
+.field-label { display: block; margin: 0 4px 6px; font-size: 13px; color: var(--muted); }
+.form-error { color: var(--danger); font-size: 13px; margin: -4px 4px 12px; min-height: 0; }
+
 /* ============ Computador: menu lateral ============ */
 @media (min-width: 960px) {
   #app { margin-left: var(--side-w); padding: 32px 40px calc(var(--mini-h) + 48px); }

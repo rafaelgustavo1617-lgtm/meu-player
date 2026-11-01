@@ -3,6 +3,7 @@ import * as db from './db.js';
 import { readMetadata } from './metadata.js';
 import { Player, EQ_BANDS, EQ_PRESETS } from './player.js';
 import { I } from './icons.js';
+import * as lock from './lock.js';
 import { art, mosaic, coverKey, coverUrl, forgetCover, tintFor, prepareCover, waveHeights, PALETTE } from './covers.js';
 
 const VERSION = '2.0';
@@ -29,6 +30,8 @@ const state = {
   settings: { accent: '#F0B44C', name: '', resume: true, eqPreset: 'Normal', eqGains: [0, 0, 0, 0, 0, 0], normalize: false },
   listen: {},               // { 'AAAA-MM-DD': segundos }
   coverTarget: null,
+  hasLock: false,
+  locked: false,
 };
 
 // ---------- Utilitários ----------
@@ -449,6 +452,14 @@ function viewSettings() {
     <div class="settings-group"><span class="eyebrow">Você</span><div class="settings-card">
       <label class="setting"><span class="setting-text"><span class="setting-title">Seu nome</span><span class="setting-desc">Aparece na saudação do Início</span></span>
         <input class="name-input" id="name-input" type="text" maxlength="24" placeholder="Opcional" value="${esc(state.settings.name)}"></label>
+    </div></div>
+
+    <div class="settings-group"><span class="eyebrow">Segurança</span><div class="settings-card">
+      <div class="setting"><span class="setting-text"><span class="setting-title">Senha do app</span>
+        <span class="setting-desc">${state.hasLock ? 'Pede a senha ao abrir e depois de 2 min fora do app' : 'Ninguém entra no app sem a sua senha'}</span></span>
+        <button class="switch" role="switch" aria-checked="${state.hasLock}" data-action="${state.hasLock ? 'pw-remove' : 'pw-create'}" aria-label="Senha do app"></button></div>
+      ${state.hasLock ? `<button class="setting" data-action="pw-change"><span class="setting-title">Trocar senha</span>${I.right(16)}</button>
+      <button class="setting" data-action="lock-now"><span class="setting-title">Bloquear agora</span>${I.right(16)}</button>` : ''}
     </div></div>
 
     <div class="settings-group"><span class="eyebrow">Aparência</span><div class="settings-card">
@@ -927,7 +938,125 @@ const actions = {
     render();
   },
   export: () => { exportBackup(); toast('Backup salvo nos downloads'); },
+  'pw-create': () => passwordSheet('create'),
+  'pw-change': () => passwordSheet('change'),
+  'pw-remove': () => passwordSheet('remove'),
+  'lock-now': () => showLock(),
 };
+
+// ---------- Senha ----------
+function passwordSheet(mode) {
+  const field = (id, label, auto) => `<label class="field-label" for="${id}">${label}</label>
+    <input id="${id}" name="${id}" type="password" autocomplete="${auto}" required minlength="${id === 'pw-current' ? 1 : 4}">`;
+  const titles = { create: 'Criar senha', change: 'Trocar senha', remove: 'Tirar a senha' };
+  const help = {
+    create: 'Com a senha, o app pede para entrar sempre que for aberto. Use pelo menos 4 caracteres e guarde bem: não tem como recuperar.',
+    change: 'Digite a senha atual e a nova.',
+    remove: 'Digite a senha atual para desligar o bloqueio.',
+  };
+  openSheet(`<form data-form="pw" data-mode="${mode}"><h3 style="margin:4px 4px 8px">${titles[mode]}</h3><p>${help[mode]}</p>
+    ${mode !== 'create' ? field('pw-current', 'Senha atual', 'current-password') : ''}
+    ${mode !== 'remove' ? field('pw-new', 'Nova senha', 'new-password') + field('pw-confirm', 'Repita a nova senha', 'new-password') : ''}
+    <p class="form-error" data-pw-error></p>
+    <div class="btn-row"><button type="button" class="btn" data-action="close-sheet">Cancelar</button>
+    <button class="btn ${mode === 'remove' ? 'danger' : 'primary'}">${mode === 'remove' ? 'Tirar senha' : 'Salvar'}</button></div></form>`);
+}
+
+async function submitPassword(form) {
+  const err = form.querySelector('[data-pw-error]');
+  const val = (n) => (form.elements[n] ? form.elements[n].value : '');
+  const mode = form.dataset.mode;
+  const fail = (m) => { err.textContent = m; form.classList.remove('shake'); void form.offsetWidth; form.classList.add('shake'); };
+  if (mode !== 'create' && !(await lock.checkPassword(val('pw-current')))) return fail('Senha atual incorreta.');
+  if (mode !== 'remove') {
+    if (val('pw-new').length < 4) return fail('A senha precisa ter pelo menos 4 caracteres.');
+    if (val('pw-new') !== val('pw-confirm')) return fail('As senhas não são iguais.');
+    await lock.setPassword(val('pw-new'));
+    state.hasLock = true;
+    toast(mode === 'create' ? 'Senha criada' : 'Senha trocada');
+  } else {
+    await lock.removePassword();
+    state.hasLock = false;
+    toast('Senha removida');
+  }
+  closeSheet();
+  render();
+}
+
+let forgotStep = 0;
+function showLock(message) {
+  state.locked = true;
+  forgotStep = 0;
+  closeSheet();
+  if (state.npOpen) closeNP();
+  const el = $('#lock');
+  el.hidden = false;
+  app.setAttribute('aria-hidden', 'true');
+  $('#lock-msg').textContent = message || 'Digite sua senha para entrar';
+  $('#lock-msg').classList.toggle('error', !!message);
+  $('#lock-forgot').textContent = 'Esqueci a senha';
+  $('#lock-btn').textContent = 'Entrar';
+  $('#lock-input').hidden = false;
+  $('#lock-input').value = '';
+  setTimeout(() => $('#lock-input').focus(), 50);
+}
+function hideLock() {
+  state.locked = false;
+  $('#lock').hidden = true;
+  app.removeAttribute('aria-hidden');
+}
+
+let afterUnlock = null;
+$('#lock-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+  const msg = $('#lock-msg');
+  if (forgotStep === 1) { // confirmou apagar tudo
+    player.audio.pause();
+    await db.deleteEverything();
+    location.reload();
+    return;
+  }
+  const wait = lock.lockedFor();
+  if (wait) { msg.textContent = `Muitas tentativas. Espere ${wait} s.`; msg.classList.add('error'); return; }
+  const input = $('#lock-input');
+  if (await lock.checkPassword(input.value)) {
+    lock.registerSuccess();
+    hideLock();
+    if (afterUnlock) { const f = afterUnlock; afterUnlock = null; await f(); }
+  } else {
+    lock.registerFail();
+    const w = lock.lockedFor();
+    msg.textContent = w ? `Muitas tentativas. Espere ${w} s.` : 'Senha incorreta. Tente de novo.';
+    msg.classList.add('error');
+    input.value = '';
+    const box = $('.lock-box');
+    box.classList.remove('shake'); void box.offsetWidth; box.classList.add('shake');
+  }
+});
+$('#lock-forgot').addEventListener('click', () => {
+  const msg = $('#lock-msg');
+  if (forgotStep === 0) {
+    forgotStep = 1;
+    msg.textContent = 'A senha não pode ser recuperada. Para entrar sem ela, é preciso apagar todas as músicas, playlists e ajustes deste aparelho.';
+    msg.classList.add('error');
+    $('#lock-input').hidden = true;
+    $('#lock-input').required = false;
+    $('#lock-btn').textContent = 'Apagar tudo e entrar';
+    $('#lock-forgot').textContent = 'Voltar';
+  } else {
+    $('#lock-input').required = true;
+    showLock();
+  }
+});
+
+// bloqueia de novo depois de 2 minutos fora do app
+let hiddenAt = 0;
+document.addEventListener('visibilitychange', () => {
+  if (!state.hasLock) return;
+  if (document.visibilityState === 'hidden') hiddenAt = Date.now();
+  else if (!state.locked && hiddenAt && Date.now() - hiddenAt > 120000) showLock();
+});
 
 document.addEventListener('click', (e) => {
   const navBtn = e.target.closest('.nav-btn[data-nav]');
@@ -944,7 +1073,9 @@ document.addEventListener('click', (e) => {
 
 document.addEventListener('submit', async (e) => {
   const form = e.target;
+  if (form.id === 'lock-form') return;
   e.preventDefault();
+  if (form.dataset.form === 'pw') { submitPassword(form); return; }
   if (form.dataset.form === 'playlist') {
     const name = form.elements.name.value.trim();
     if (!name) return;
@@ -1120,7 +1251,11 @@ async function init() {
   applyAccent();
   if (state.settings.eqPreset !== 'Normal' || state.settings.normalize) applyEq();
   history.replaceState({ route: state.route, first: true }, '');
-  render(true);
-  if (state.settings.resume) { await restoreSession(); renderMini(); }
+  state.hasLock = await lock.hasPassword();
+  const start = async () => {
+    render(true);
+    if (state.settings.resume) { await restoreSession(); renderMini(); }
+  };
+  if (state.hasLock) { afterUnlock = start; showLock(); } else await start();
 }
 init();

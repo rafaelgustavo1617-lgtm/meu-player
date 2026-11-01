@@ -114,6 +114,15 @@ export async function setMeta(key, value) {
   return tx(['meta'], 'readwrite', (t) => { t.objectStore('meta').put({ key, value }); });
 }
 
+// Apaga tudo deste aparelho (usado no "Esqueci a senha")
+export async function deleteEverything() {
+  if (dbPromise) { (await dbPromise).close(); dbPromise = null; }
+  await new Promise((resolve) => {
+    const req = indexedDB.deleteDatabase(DB_NAME);
+    req.onsuccess = req.onerror = req.onblocked = () => resolve();
+  });
+}
+
 // ---------- Armazenamento ----------
 
 // Pede ao navegador para não apagar os dados quando o celular estiver com pouco espaço.
