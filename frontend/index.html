@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Meu Player</title>
   <meta name="description" content="Player de música pessoal que funciona sem internet.">
-  <meta name="theme-color" content="#101113">
+  <meta name="theme-color" content="#0c0d0f">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
@@ -16,37 +16,34 @@
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <main id="app" aria-live="polite"></main>
+  <main id="app"></main>
 
-  <!-- Mini player -->
   <div id="mini" class="mini" hidden></div>
 
-  <!-- Navegação inferior -->
   <nav class="nav" aria-label="Principal">
+    <div class="nav-brand"><img src="icons/icon-192.png" alt="">Meu Player</div>
     <div class="nav-inner">
-      <button data-view="library">
+      <button class="nav-btn" data-nav="home">
+        <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11 12 4l8 7v9h-5v-6H9v6H4z"/></svg>
+        Início
+      </button>
+      <button class="nav-btn" data-nav="library">
         <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 19V5"/><path d="M9 19V5"/><path d="m14 5 5 14"/></svg>
         Biblioteca
       </button>
-      <button data-view="favorites">
+      <button class="nav-btn" data-nav="favorites">
         <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>
         Favoritos
       </button>
-      <button data-view="playlists">
-        <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h12"/><path d="M3 12h12"/><path d="M3 18h8"/><circle cx="18" cy="17" r="3"/><path d="M21 17V5"/></svg>
-        Playlists
-      </button>
-      <button data-view="import">
-        <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3"/><path d="m7 8 5-5 5 5"/><path d="M5 21h14"/></svg>
-        Importar
+      <button class="nav-btn" data-nav="settings">
+        <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h10"/><path d="M18 7h2"/><circle cx="16" cy="7" r="2"/><path d="M4 17h4"/><path d="M12 17h8"/><circle cx="10" cy="17" r="2"/></svg>
+        Ajustes
       </button>
     </div>
   </nav>
 
-  <!-- Tela "Tocando agora" -->
   <section id="np" class="np" aria-label="Tocando agora" aria-hidden="true"></section>
 
-  <!-- Seletores de arquivo (escondidos) -->
   <input id="pick-files" type="file" accept="audio/*,.mp3,.m4a,.flac,.wav,.ogg,.opus,.aac" multiple hidden>
   <input id="pick-folder" type="file" webkitdirectory multiple hidden>
   <input id="pick-cover" type="file" accept="image/*" hidden>

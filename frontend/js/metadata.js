@@ -19,6 +19,8 @@ export async function readMetadata(file) {
     title: tags.title || fromName.title,
     artist: tags.artist || fromName.artist || 'Artista desconhecido',
     album: tags.album || '',
+    year: tags.year ? parseInt(tags.year, 10) || null : null,
+    trackNumber: tags.track ? parseInt(tags.track, 10) || null : null,
     cover: tags.cover || null, // Blob da imagem, se houver
     duration,
   };
@@ -56,6 +58,8 @@ function parseID3v2(buf) {
     if (id === 'TIT2') out.title = decodeText(data);
     else if (id === 'TPE1') out.artist = decodeText(data);
     else if (id === 'TALB') out.album = decodeText(data);
+    else if (id === 'TYER' || id === 'TDRC') out.year = decodeText(data).slice(0, 4);
+    else if (id === 'TRCK') out.track = decodeText(data).split('/')[0];
     else if (id === 'APIC' && !out.cover) out.cover = decodePicture(data);
     pos = start + size;
   }

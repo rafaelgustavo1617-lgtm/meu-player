@@ -1,0 +1,38 @@
+// Ícones em SVG (traço), usados em toda a interface.
+const s = (size, body, extra = '') =>
+  `<svg aria-hidden="true" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ${extra}>${body}</svg>`;
+
+export const I = {
+  search: (z = 20) => s(z, '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>'),
+  plus: (z = 22) => s(z, '<path d="M12 5v14"/><path d="M5 12h14"/>', 'stroke-width="2.4"'),
+  upload: (z = 22) => s(z, '<path d="M12 15V3"/><path d="m7 8 5-5 5 5"/><path d="M5 21h14"/>'),
+  download: (z = 18) => s(z, '<path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/>'),
+  shuffle: (z = 20) => s(z, '<path d="M16 3h5v5"/><path d="M4 20 21 3"/><path d="M21 16v5h-5"/><path d="m15 15 6 6"/><path d="M4 4l5 5"/>'),
+  repeat: (z = 22) => s(z, '<path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/>'),
+  more: (z = 18) => s(z, '<circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/>'),
+  moreH: (z = 20) => s(z, '<circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/>'),
+  heart: (on, z = 22) => `<svg aria-hidden="true" width="${z}" height="${z}" viewBox="0 0 24 24" fill="${on ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>`,
+  play: (z = 22) => `<svg aria-hidden="true" width="${z}" height="${z}" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`,
+  pause: (z = 22) => `<svg aria-hidden="true" width="${z}" height="${z}" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>`,
+  prev: (z = 32) => `<svg aria-hidden="true" width="${z}" height="${z}" viewBox="0 0 24 24" fill="currentColor"><path d="M18 5v14l-10-7z"/><rect x="5" y="5" width="2.5" height="14" rx="1"/></svg>`,
+  next: (z = 32) => `<svg aria-hidden="true" width="${z}" height="${z}" viewBox="0 0 24 24" fill="currentColor"><path d="M6 5v14l10-7z"/><rect x="16.5" y="5" width="2.5" height="14" rx="1"/></svg>`,
+  down: (z = 20) => s(z, '<path d="m6 9 6 6 6-6"/>'),
+  back: (z = 20) => s(z, '<path d="m15 6-6 6 6 6"/>'),
+  right: (z = 18) => s(z, '<path d="m9 6 6 6-6 6"/>'),
+  x: (z = 16) => s(z, '<path d="M6 6l12 12"/><path d="M18 6 6 18"/>', 'stroke-width="2.4"'),
+  list: (z = 20) => s(z, '<path d="M3 6h12"/><path d="M3 12h12"/><path d="M3 18h7"/><circle cx="18" cy="17" r="3"/><path d="M21 17V5"/>'),
+  addList: (z = 20) => s(z, '<path d="M3 6h12"/><path d="M3 12h12"/><path d="M3 18h7"/><path d="M18 14v8"/><path d="M14 18h8"/>'),
+  queue: (z = 20) => s(z, '<path d="M3 6h18"/><path d="M3 12h18"/><path d="M3 18h12"/>'),
+  playNext: (z = 20) => s(z, '<path d="M3 6h12"/><path d="M3 12h8"/><path d="M3 18h8"/><path d="M15 13v7l5-3.5z" fill="currentColor"/>'),
+  eq: (z = 20) => s(z, '<path d="M6 4v16"/><path d="M12 4v16"/><path d="M18 4v16"/><circle cx="6" cy="14" r="2" fill="currentColor"/><circle cx="12" cy="8" r="2" fill="currentColor"/><circle cx="18" cy="16" r="2" fill="currentColor"/>'),
+  moon: (z = 20) => s(z, '<path d="M20 14.5A8 8 0 1 1 9.5 4 6.5 6.5 0 0 0 20 14.5z"/>'),
+  trash: (z = 20) => s(z, '<path d="M4 7h16"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M6 7l1 13h10l1-13"/><path d="M9 7V4h6v3"/>'),
+  edit: (z = 20) => s(z, '<path d="M4 20h4L19 9l-4-4L4 16z"/>'),
+  image: (z = 20) => s(z, '<rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/>'),
+  disc: (z = 20) => s(z, '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2.5"/>'),
+  user: (z = 20) => s(z, '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>'),
+  phone: (z = 22) => s(z, '<rect x="6" y="2" width="12" height="20" rx="3"/><path d="M11 18h2"/>'),
+  info: (z = 20) => s(z, '<circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><path d="M12 8h.01"/>'),
+  sort: (z = 16) => s(z, '<path d="M7 4v16"/><path d="m3 16 4 4 4-4"/><path d="M14 6h7"/><path d="M14 12h5"/><path d="M14 18h3"/>'),
+  github: (z = 20) => s(z, '<path d="M9 19c-4 1.5-4-2-6-2.5m12 5V18a3.4 3.4 0 0 0-1-2.6c3.2-.4 6.5-1.6 6.5-7a5.4 5.4 0 0 0-1.5-3.8 5 5 0 0 0-.1-3.7s-1.2-.4-3.9 1.4a13.4 13.4 0 0 0-7 0C6.3 1.5 5.1 1.9 5.1 1.9a5 5 0 0 0-.1 3.7A5.4 5.4 0 0 0 3.5 9.4c0 5.4 3.3 6.6 6.5 7a3.4 3.4 0 0 0-1 2.6V22"/>'),
+};

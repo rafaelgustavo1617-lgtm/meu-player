@@ -8,23 +8,30 @@ Player de música pessoal que **funciona sem internet**. Você importa as músic
 
 ## Funcionalidades
 
-- Importar músicas (MP3, M4A, FLAC, WAV, OGG) de arquivos ou de uma pasta inteira
-- Leitura das tags ID3 (título, artista, álbum e capa) direto do MP3, sem bibliotecas
-- Biblioteca com busca e agrupamento por artista e álbum
-- **Favoritos**
-- Playlists: criar, renomear, excluir, adicionar e remover músicas
-- Player completo: tocar/pausar, anterior/próxima, aleatório, repetir (todas/uma) e barra de progresso
+- **Início** com saudação, atalhos, "Continue ouvindo", álbuns e gráfico do tempo ouvido na semana
+- **Biblioteca** com busca e abas de Músicas, Álbuns, Artistas e Playlists
+- Páginas de **álbum** e **artista** com fundo na cor da capa
+- **Favoritos** com ordenação por data, nome ou artista
+- **Playlists** suas + automáticas (Mais tocadas, Adicionadas agora, Nunca tocadas)
+- **Tocando agora** com fundo na cor da capa, barra em forma de onda, aleatório, repetir, **fila editável**, **timer de sono** e **velocidade**
+- **Equalizador** de 6 bandas (Web Audio API) com estilos prontos e normalização de volume
+- **Capas**: lidas do MP3, geradas automaticamente ou escolhidas da galeria
+- Editar título, artista e álbum de cada música
+- Importar músicas (MP3, M4A, FLAC, WAV, OGG) de arquivos ou de uma pasta, lendo as tags ID3 sem bibliotecas
+- Continua de onde parou, cor de destaque personalizável, backup das playlists em JSON
 - Controles na tela de bloqueio e no fone (Media Session API)
-- Funciona 100% offline (Service Worker + IndexedDB)
-- Instalável no celular (Android e iPhone)
+- Funciona 100% offline (Service Worker + IndexedDB) e é instalável no celular
+- Layout de celular e de computador (menu lateral)
 
 ## Como funciona por dentro
 
 | Parte | Arquivo | O que faz |
 |---|---|---|
-| Interface | `frontend/js/app.js` | Telas, navegação, menus |
-| Player | `frontend/js/player.js` | Fila, aleatório, repetir, Media Session |
-| Banco local | `frontend/js/db.js` | IndexedDB: músicas (Blob), metadados e playlists |
+| Interface | `frontend/js/app.js` | Telas, navegação (com o botão voltar), menus, estatísticas |
+| Player | `frontend/js/player.js` | Fila, aleatório, repetir, equalizador, timer, velocidade, Media Session |
+| Capas | `frontend/js/covers.js` | Capas geradas, cor de fundo a partir da capa, forma de onda |
+| Ícones | `frontend/js/icons.js` | Ícones SVG |
+| Banco local | `frontend/js/db.js` | IndexedDB: músicas (Blob), metadados, playlists e ajustes |
 | Metadados | `frontend/js/metadata.js` | Parser de ID3v2 escrito do zero |
 | Offline | `frontend/sw.js` | Guarda o app em cache para abrir sem internet |
 | Instalação | `frontend/manifest.webmanifest` | Nome, ícone e cores do app instalado |

@@ -1,6 +1,6 @@
 // Service worker: guarda os arquivos do app no aparelho para abrir sem internet.
 // Ao mudar qualquer arquivo do app, aumente a versão para os celulares baixarem a nova.
-const VERSION = 'v2';
+const VERSION = 'v3';
 const CACHE = `meu-player-${VERSION}`;
 const APP_SHELL = [
   './',
@@ -11,6 +11,8 @@ const APP_SHELL = [
   'js/db.js',
   'js/player.js',
   'js/metadata.js',
+  'js/covers.js',
+  'js/icons.js',
   'icons/icon.svg',
   'icons/icon-192.png',
   'icons/icon-512.png',

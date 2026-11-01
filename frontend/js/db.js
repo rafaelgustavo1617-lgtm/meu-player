@@ -5,7 +5,7 @@
 //   playlists -> { id, name, trackIds[] }
 
 const DB_NAME = 'meu-player';
-const DB_VERSION = 1;
+const DB_VERSION = 2; // v2: store "meta" (ajustes, estatísticas, última música)
 
 let dbPromise = null;
 
@@ -21,6 +21,7 @@ function openDB() {
       }
       if (!db.objectStoreNames.contains('files')) db.createObjectStore('files', { keyPath: 'id' });
       if (!db.objectStoreNames.contains('playlists')) db.createObjectStore('playlists', { keyPath: 'id' });
+      if (!db.objectStoreNames.contains('meta')) db.createObjectStore('meta', { keyPath: 'key' });
     };
     req.onsuccess = () => resolve(req.result);
     req.onerror = () => reject(req.error);
@@ -100,6 +101,17 @@ export async function savePlaylist(p) {
 
 export async function deletePlaylist(id) {
   return tx(['playlists'], 'readwrite', (t) => { t.objectStore('playlists').delete(id); });
+}
+
+// ---------- Meta (chave/valor): ajustes, estatísticas, sessão ----------
+
+export async function getMeta(key, fallback = null) {
+  const rec = await tx(['meta'], 'readonly', (t) => promisify(t.objectStore('meta').get(key)));
+  return rec ? rec.value : fallback;
+}
+
+export async function setMeta(key, value) {
+  return tx(['meta'], 'readwrite', (t) => { t.objectStore('meta').put({ key, value }); });
 }
 
 // ---------- Armazenamento ----------
